@@ -19,7 +19,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // Dummy data sementara
         val dummyEquipment = listOf(
             Equipment(1, "Canon EOS R5", 150000, R.drawable.camera_1),
             Equipment(2, "Sony A7 III", 120000, R.drawable.camera_1),
@@ -28,9 +27,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ResponsiPabTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    HomeScreen(dummyEquipment) { }
-                }
+                HomeScreen(dummyEquipment) { }
             }
         }
     }
