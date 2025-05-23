@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.responsipab"
+    namespace = "com.example.rentalkamera"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.responsipab"
+        applicationId = "com.example.rentalkamera"
         minSdk = 30
         targetSdk = 35
         versionCode = 1
@@ -49,6 +49,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation ("androidx.compose.ui:ui-text-google-fonts:1.4.0")
+    implementation ("androidx.compose.material3:material3:1.0.1")
+    implementation ("androidx.core:core-ktx:1.9.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
