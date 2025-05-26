@@ -1,8 +1,11 @@
 package com.example.rentalkamera
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,14 +34,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ResponsiPab.ui.theme.RentalKameraTheme
+import com.example.rentalkamera.ui.theme.RentalKameraTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             RentalKameraTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -53,6 +55,21 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RentalKameraApp() {
+    var selectedCamera by remember { mutableStateOf<Camera?>(null) }
+
+    if (selectedCamera != null) {
+        CameraDetailScreen(
+            camera = selectedCamera!!,
+            onBack = { selectedCamera = null }
+        )
+    } else {
+        HomeScreen(onCameraClick = { camera -> selectedCamera = camera })
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreen(onCameraClick: (Camera) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -116,17 +133,14 @@ fun RentalKameraApp() {
         ) {
             item {
                 Spacer(modifier = Modifier.height(8.dp))
-                // Search Bar
                 SearchBar()
             }
 
             item {
-                // Banner Promo
                 PromoSection()
             }
 
             item {
-                // Kategori Kamera
                 Text(
                     "Kategori Kamera",
                     fontSize = 18.sp,
@@ -137,7 +151,6 @@ fun RentalKameraApp() {
             }
 
             item {
-                // Kamera Populer
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -152,11 +165,10 @@ fun RentalKameraApp() {
                         Text("Lihat Semua")
                     }
                 }
-                PopularCameraSection()
+                PopularCameraSection(onCameraClick = onCameraClick)
             }
 
             item {
-                // Kamera Terbaru
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -171,13 +183,240 @@ fun RentalKameraApp() {
                         Text("Lihat Semua")
                     }
                 }
-                NewCameraSection()
+                NewCameraSection(onCameraClick = onCameraClick)
             }
 
             item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CameraDetailScreen(camera: Camera, onBack: () -> Unit) {
+    val context = LocalContext.current
+
+    // Fungsi untuk membuka WhatsApp
+    fun openWhatsApp(phoneNumber: String, message: String) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW)
+            val url = "https://api.whatsapp.com/send?phone=$phoneNumber&text=${Uri.encode(message)}"
+            intent.data = Uri.parse(url)
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            // Jika WhatsApp tidak terinstall, buka di browser
+            val intent = Intent(Intent.ACTION_VIEW)
+            val url = "https://web.whatsapp.com/send?phone=$phoneNumber&text=${Uri.encode(message)}"
+            intent.data = Uri.parse(url)
+            context.startActivity(intent)
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Detail Kamera") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Kembali"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { /* TODO: Implementasi favorit */ }) {
+                        Icon(
+                            imageVector = Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorit"
+                        )
+                    }
+                    IconButton(onClick = { /* TODO: Implementasi share */ }) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Share"
+                        )
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            item {
+                // Gambar kamera
+                Image(
+                    painter = painterResource(id = camera.imageRes),
+                    contentDescription = camera.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp)
+                )
+            }
+
+            item {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    // Nama kamera
+                    Text(
+                        text = camera.name,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Rating dan harga
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = "Rating",
+                                tint = Color(0xFFFFC107),
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "${camera.rating} (125 ulasan)",
+                                fontSize = 16.sp
+                            )
+                        }
+
+                        Text(
+                            text = "Rp ${formatPrice(camera.price)}/Hari",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Spesifikasi
+                    Text(
+                        text = "Spesifikasi",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            SpecificationRow("Resolusi", "30.4 MP")
+                            SpecificationRow("ISO", "100-32000")
+                            SpecificationRow("Video", "4K UHD")
+                            SpecificationRow("Baterai", "1865 shots")
+                            SpecificationRow("Berat", "890g")
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Deskripsi
+                    Text(
+                        text = "Deskripsi",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "Kamera DSLR profesional dengan kualitas gambar luar biasa. Dilengkapi dengan sensor full-frame dan teknologi autofocus yang canggih. Cocok untuk fotografi profesional, pernikahan, dan event penting lainnya. Sudah termasuk lensa kit 24-70mm f/2.8.",
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // Tombol booking
+                    Button(
+                        onClick = {
+                            val phoneNumber = "6281234567890" // Ganti dengan nomor WhatsApp Anda
+                            val message = "Halo, saya tertarik untuk menyewa kamera ${camera.name} dengan harga Rp ${formatPrice(camera.price)}/hari. Apakah masih tersedia?"
+                            openWhatsApp(phoneNumber, message)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCart,
+                            contentDescription = "Booking",
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Booking via WhatsApp",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedButton(
+                        onClick = { /* TODO: Implementasi chat */ },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = "Chat",
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Hubungi Penyewa",
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SpecificationRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = value,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
 
@@ -215,7 +454,6 @@ fun PromoSection() {
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             // Placeholder untuk gambar promo
-            // Dalam aplikasi nyata, gunakan coil atau glide untuk memuat gambar dari URL
             Image(
                 painter = painterResource(id = R.drawable.promo_placeholder),
                 contentDescription = "Promo Banner",
@@ -306,7 +544,7 @@ data class Camera(
 )
 
 @Composable
-fun PopularCameraSection() {
+fun PopularCameraSection(onCameraClick: (Camera) -> Unit) {
     val popularCameras = listOf(
         Camera(1, "Canon EOS 5D Mark IV", 250000, 4.8f, R.drawable.camera_1),
         Camera(2, "Sony Alpha A7 III", 300000, 4.9f, R.drawable.camera_2),
@@ -319,13 +557,13 @@ fun PopularCameraSection() {
         modifier = Modifier.padding(vertical = 8.dp)
     ) {
         items(popularCameras) { camera ->
-            CameraCard(camera)
+            CameraCard(camera, onCameraClick = onCameraClick)
         }
     }
 }
 
 @Composable
-fun NewCameraSection() {
+fun NewCameraSection(onCameraClick: (Camera) -> Unit) {
     val newCameras = listOf(
         Camera(5, "Canon EOS R5", 350000, 4.9f, R.drawable.camera_5),
         Camera(6, "Sony Alpha A7S III", 320000, 4.8f, R.drawable.camera_6),
@@ -342,22 +580,25 @@ fun NewCameraSection() {
         modifier = Modifier.height(420.dp)
     ) {
         items(newCameras) { camera ->
-            CameraCard(camera, isGrid = true)
+            CameraCard(camera, isGrid = true, onCameraClick = onCameraClick)
         }
     }
 }
 
 @Composable
-fun CameraCard(camera: Camera, isGrid: Boolean = false) {
+fun CameraCard(
+    camera: Camera,
+    isGrid: Boolean = false,
+    onCameraClick: (Camera) -> Unit
+) {
     val cardWidth = if (isGrid) Modifier.fillMaxWidth() else Modifier.width(180.dp)
 
     Card(
         modifier = cardWidth
-            .clickable { /* TODO: Navigasi ke detail kamera */ },
+            .clickable { onCameraClick(camera) },
         shape = RoundedCornerShape(12.dp)
     ) {
         Column {
-            // Placeholder untuk gambar kamera
             Image(
                 painter = painterResource(id = camera.imageRes),
                 contentDescription = camera.name,
@@ -379,7 +620,6 @@ fun CameraCard(camera: Camera, isGrid: Boolean = false) {
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Menggunakan formatPrice untuk menampilkan harga
                 Text(
                     text = "Rp ${formatPrice(camera.price)}/Hari",
                     color = MaterialTheme.colorScheme.primary,
