@@ -1,4 +1,4 @@
-package com.example.responsipab.ui.theme
+package com.example.rentalkamera.ui.theme
 
 import android.app.Activity
 import android.os.Build
