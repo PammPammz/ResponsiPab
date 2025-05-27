@@ -1,15 +1,51 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Built files
+/build/
+/app/build/
+/*.apk
+/*.ap_
+
+# Gradle files
+.gradle/
+**/build/
+**/captures/
 local.properties
+
+# Signing / Keystore info
+*.jks
+*.keystore
+keystore.properties
+
+# IntelliJ / Android Studio files
+.idea/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Kotlin-specific
+*.kotlin_module
+
+# Mac OS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Jetpack Compose preview cache
+/.compose-cache/
+
+# Node/npm if you use any React Native modules or frontend tools
+node_modules/
+
+# Ignore generated classes
+/captures/
+/output.json
+
+# Misc
+*.swp
+*.lock
+*.orig
