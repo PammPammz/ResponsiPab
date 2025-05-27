@@ -1,4 +1,4 @@
-package com.example.rentalkamera.ui.theme
+package com.example.responsipab.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

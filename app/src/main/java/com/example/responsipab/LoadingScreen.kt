@@ -1,4 +1,4 @@
-package com.example.rentalkamera
+package com.example.responsipab
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,9 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.rentalkamera.MainActivity
 import kotlinx.coroutines.delay
-import com.example.rentalkamera.ui.theme.RentalKameraTheme
+import com.example.responsipab.ui.theme.RentalKameraTheme
 
 class LoadingScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

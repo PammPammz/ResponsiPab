@@ -16,7 +16,7 @@
 
         <!-- Menyatakan aktivitas LoadingScreen sebagai activity utama -->
         <activity
-            android:name=".LoadingScreen"
+            android:name="com.example.responsipab.LoadingScreen"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.ResponsiPab">
@@ -28,7 +28,7 @@
 
         <!-- Aktivitas MainActivity yang akan ditampilkan setelah layar loading -->
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.responsipab.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.ResponsiPab">
