@@ -42,14 +42,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.responsipab.model.Camera
+import com.example.responsipab.data.CameraRepository
 import com.example.responsipab.ui.camera_detail.components.SpecificationRow
 import com.example.responsipab.ui.shared.utils.formatPrice
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CameraDetailScreen(camera: Camera, onBack: () -> Unit) {
+fun CameraDetailScreen(cameraId: Int?, onBack: () -> Unit) {
     val context = LocalContext.current
+    val camera = CameraRepository.getCameraById(cameraId)
+
+    if (camera == null) {
+        Text("Camera not found")
+        return
+    }
 
     // Fungsi untuk membuka WhatsApp
     fun openWhatsApp(phoneNumber: String, message: String) {
