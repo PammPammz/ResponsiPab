@@ -1,4 +1,4 @@
-package com.example.responsipab.ui.theme
+package com.example.responsipab.ui.shared.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
