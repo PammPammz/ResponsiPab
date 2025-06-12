@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.responsipab.model.Camera
+import com.example.responsipab.data.model.Camera
 import com.example.responsipab.ui.shared.utils.formatPrice
 
 @Composable

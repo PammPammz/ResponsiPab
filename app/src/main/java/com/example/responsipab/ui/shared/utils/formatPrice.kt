@@ -1,10 +1,11 @@
 package com.example.responsipab.ui.shared.utils
 
-fun formatPrice(price: Int): String {
-    return if (price >= 1000) {
-        val formattedPrice = price / 1000
-        "${formattedPrice}K"
+fun formatPrice(price: Double): String {
+    val priceInt = price.toInt()
+    return if (priceInt >= 1000) {
+        val formattedPrice = priceInt / 1000
+        "Rp ${formattedPrice}K"
     } else {
-        price.toString()
+        "Rp $priceInt"
     }
 }

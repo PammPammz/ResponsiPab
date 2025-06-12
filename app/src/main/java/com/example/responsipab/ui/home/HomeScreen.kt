@@ -13,12 +13,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.responsipab.model.Camera
+import com.example.responsipab.data.model.Camera
 import com.example.responsipab.ui.home.components.CategorySection
 import com.example.responsipab.ui.home.components.HomeBottomBar
 import com.example.responsipab.ui.home.components.HomeTopBar
@@ -26,12 +28,25 @@ import com.example.responsipab.ui.home.components.NewCameraSection
 import com.example.responsipab.ui.home.components.PopularCameraSection
 import com.example.responsipab.ui.home.components.PromoCard
 import com.example.responsipab.ui.home.components.SearchBar
+import com.example.responsipab.ui.viewmodel.CartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(onCameraClick: (Camera) -> Unit) {
+fun HomeScreen(
+    cartViewModel: CartViewModel,
+    onCameraClick: (Camera) -> Unit,
+    onNavigateToCart: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val cartState by cartViewModel.uiState.collectAsState()
+
     Scaffold(
-        topBar = { HomeTopBar() },
+        topBar = {
+            HomeTopBar(
+                cartItemCount = cartState.totalItems,
+                onCartClick = onNavigateToCart
+            )
+        },
         bottomBar = { HomeBottomBar() }
     ) { innerPadding ->
         LazyColumn(
@@ -75,7 +90,10 @@ fun HomeScreen(onCameraClick: (Camera) -> Unit) {
                         Text("Lihat Semua")
                     }
                 }
-                PopularCameraSection(onCameraClick = onCameraClick)
+                PopularCameraSection(
+                    onCameraClick = onCameraClick,
+                    cartViewModel = cartViewModel
+                )
             }
 
             item {
@@ -93,7 +111,10 @@ fun HomeScreen(onCameraClick: (Camera) -> Unit) {
                         Text("Lihat Semua")
                     }
                 }
-                NewCameraSection(onCameraClick = onCameraClick)
+                NewCameraSection(
+                    onCameraClick = onCameraClick,
+                    cartViewModel = cartViewModel
+                )
             }
 
             item {
