@@ -33,6 +33,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,13 +46,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.responsipab.data.CameraRepository
 import com.example.responsipab.ui.camera_detail.components.SpecificationRow
+import com.example.responsipab.ui.home.components.AddToCartButton
+import com.example.responsipab.ui.home.components.CartBadge
 import com.example.responsipab.ui.shared.utils.formatPrice
+import com.example.responsipab.ui.viewmodel.CartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CameraDetailScreen(cameraId: Int?, onBack: () -> Unit) {
+fun CameraDetailScreen(
+    cameraId: Int?,
+    cartViewModel: CartViewModel,
+    onBack: () -> Unit,
+    onNavigateToCart: () -> Unit
+) {
     val context = LocalContext.current
     val camera = CameraRepository.getCameraById(cameraId)
+    val cartState by cartViewModel.uiState.collectAsState()
 
     if (camera == null) {
         Text("Camera not found")
@@ -86,6 +97,10 @@ fun CameraDetailScreen(cameraId: Int?, onBack: () -> Unit) {
                     }
                 },
                 actions = {
+                    CartBadge(
+                        itemCount = cartState.totalItems,
+                        onClick = onNavigateToCart
+                    )
                     IconButton(onClick = { /* TODO: Implementasi favorit */ }) {
                         Icon(
                             imageVector = Icons.Default.FavoriteBorder,
@@ -207,7 +222,19 @@ fun CameraDetailScreen(cameraId: Int?, onBack: () -> Unit) {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Tombol booking
+                    // Add to Cart Button (NEW)
+                    AddToCartButton(
+                        camera = camera,
+                        onAddToCart = { cam, quantity, rentalDays ->
+                            cartViewModel.addToCart(cam, quantity, rentalDays)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        isLoading = cartState.isLoading
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Tombol booking via WhatsApp
                     Button(
                         onClick = {
                             val phoneNumber = "6281234567890" // Ganti dengan nomor WhatsApp Anda

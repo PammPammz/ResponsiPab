@@ -8,9 +8,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.responsipab.navigation.RentalCameraNavGraph
 import com.example.responsipab.ui.shared.theme.RentalKameraTheme
+import com.example.responsipab.ui.viewmodel.CartViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,10 +34,15 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun RentalKameraApp() {
     val navController = rememberNavController()
-    RentalCameraNavGraph(navController = navController)
+
+    // Inisialisasi CartViewModel di level app untuk sharing state
+    val cartViewModel: CartViewModel = viewModel()
+
+    RentalCameraNavGraph(
+        navController = navController,
+        cartViewModel = cartViewModel
+    )
 }
-
-
 
 @Preview(showBackground = true)
 @Composable
