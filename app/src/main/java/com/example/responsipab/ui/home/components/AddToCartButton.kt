@@ -98,10 +98,12 @@ private fun AddToCartDialog(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(
-                            onClick = { if (quantity > 1) onQuantityChange(quantity - 1) }
+                        TextButton(
+                            onClick = { onQuantityChange(quantity - 1) },
+                            modifier = Modifier.size(32.dp),
+                            contentPadding = PaddingValues(0.dp)
                         ) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Kurangi")
+                            Text("-", style = MaterialTheme.typography.titleLarge)
                         }
                         Text(
                             text = quantity.toString(),
@@ -117,39 +119,12 @@ private fun AddToCartDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Rental Days Selector
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Lama Sewa (hari):")
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(
-                            onClick = { if (rentalDays > 1) onRentalDaysChange(rentalDays - 1) }
-                        ) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Kurangi")
-                        }
-                        Text(
-                            text = rentalDays.toString(),
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                        IconButton(
-                            onClick = { onRentalDaysChange(rentalDays + 1) }
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = "Tambah")
-                        }
-                    }
-                }
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Total Price
                 val totalPrice = camera.price * quantity * rentalDays
                 Text(
-                    text = "Total: Rp ${formatPrice(totalPrice.toInt().toDouble())}",
+                    text = "Total: ${formatPrice(totalPrice.toInt().toDouble())}",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )

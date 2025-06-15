@@ -26,7 +26,7 @@ fun CartBadge(
     Box(modifier = modifier) {
         IconButton(onClick = onClick) {
             Icon(
-                Icons.Default.ShoppingCart,
+                imageVector = Icons.Default.ShoppingCart,
                 contentDescription = "Keranjang",
                 tint = MaterialTheme.colorScheme.onSurface
             )
@@ -36,10 +36,12 @@ fun CartBadge(
             Box(
                 modifier = Modifier
                     .size(20.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.error)
+                    .background(
+                        color = MaterialTheme.colorScheme.error,
+                        shape = CircleShape
+                    )
                     .align(Alignment.TopEnd)
-                    .offset(x = 4.dp, y = (-4).dp),
+                    .offset(y = (-2).dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -47,13 +49,10 @@ fun CartBadge(
                     color = Color.White,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(1.dp), // optional fine-tune
                     textAlign = TextAlign.Center
                 )
             }
         }
     }
-}
-
-private fun formatCurrency(amount: Double): String {
-    return "Rp ${String.format("%,.0f", amount)}"
 }

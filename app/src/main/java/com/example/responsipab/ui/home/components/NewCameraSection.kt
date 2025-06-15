@@ -141,7 +141,7 @@ private fun NewCameraCard(
 
             // Price
             Text(
-                text = "Rp ${formatPrice(camera.price.toInt().toDouble())}/hari",
+                text = "${formatPrice(camera.price.toInt().toDouble())}/hari",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary

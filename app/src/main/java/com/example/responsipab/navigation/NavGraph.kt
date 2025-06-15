@@ -9,7 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.responsipab.ui.camera_detail.CameraDetailScreen
 import com.example.responsipab.ui.home.HomeScreen
-import com.example.responsipab.ui.screen.CartScreen
+import com.example.responsipab.ui.cart.CartScreen
 import com.example.responsipab.ui.viewmodel.CartViewModel
 
 @Composable

@@ -170,7 +170,7 @@ fun CameraDetailScreen(
                         }
 
                         Text(
-                            text = "Rp ${formatPrice(camera.price)}/Hari",
+                            text = "${formatPrice(camera.price)}/Hari",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
@@ -234,33 +234,6 @@ fun CameraDetailScreen(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Tombol booking via WhatsApp
-                    Button(
-                        onClick = {
-                            val phoneNumber = "6281234567890" // Ganti dengan nomor WhatsApp Anda
-                            val message = "Halo, saya tertarik untuk menyewa kamera ${camera.name} dengan harga Rp ${formatPrice(camera.price)}/hari. Apakah masih tersedia?"
-                            openWhatsApp(phoneNumber, message)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ShoppingCart,
-                            contentDescription = "Booking",
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Booking via WhatsApp",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
                     OutlinedButton(
                         onClick = { /* TODO: Implementasi chat */ },
                         modifier = Modifier
@@ -275,7 +248,7 @@ fun CameraDetailScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Hubungi Penyewa",
+                            text = "Tanya tentang produk via WA",
                             fontSize = 16.sp
                         )
                     }

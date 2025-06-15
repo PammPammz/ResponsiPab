@@ -66,7 +66,7 @@ fun CameraCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Rp ${formatPrice(camera.price)}/Hari",
+                    text = "${formatPrice(camera.price)}/Hari",
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Medium
                 )

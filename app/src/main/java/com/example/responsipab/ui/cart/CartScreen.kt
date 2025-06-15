@@ -1,5 +1,5 @@
 // File: ui/screen/CartScreen.kt
-package com.example.responsipab.ui.screen
+package com.example.responsipab.ui.cart
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -36,7 +36,7 @@ fun CartScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Keranjang Sewa") },
+                title = { },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -206,14 +206,9 @@ private fun CartItemCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "Rp ${formatPrice(cartItem.camera.price.toDouble())}/hari",
+                    text = "${formatPrice(cartItem.camera.price.toDouble())}/hari",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = "${cartItem.rentalDays} hari sewa",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -222,11 +217,12 @@ private fun CartItemCard(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(
+                    TextButton(
                         onClick = { onUpdateQuantity(cartItem.id, cartItem.quantity - 1) },
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(32.dp),
+                        contentPadding = PaddingValues(0.dp)
                     ) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Kurangi")
+                        Text("-", style = MaterialTheme.typography.titleLarge)
                     }
 
                     Text(
@@ -264,7 +260,7 @@ private fun CartItemCard(
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = "Rp ${formatPrice(cartItem.totalPrice.toDouble())}",
+                    text = "${formatPrice(cartItem.totalPrice.toDouble())}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -298,7 +294,7 @@ private fun CartSummary(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Rp ${formatPrice(totalPrice.toDouble())}",
+                    text = "${formatPrice(totalPrice.toDouble())}",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
