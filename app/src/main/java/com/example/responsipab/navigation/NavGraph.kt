@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.compose.runtime.getValue
+import com.example.responsipab.ui.auth.LoginScreen
+import com.example.responsipab.ui.auth.RegisterScreen
 import com.example.responsipab.ui.camera_detail.CameraDetailScreen
 import com.example.responsipab.ui.home.HomeScreen
 import com.example.responsipab.ui.cart.CartScreen
@@ -24,6 +26,20 @@ fun RentalCameraNavGraph(
     cartViewModel: CartViewModel
 ) {
     NavHost(navController = navController, startDestination = "home") {
+
+        composable("login") {
+            LoginScreen (
+                onLogin = { email, password -> /* handle login */ },
+                onNavigateToRegister = { navController.navigate("register") }
+            )
+        }
+
+        composable("register") {
+            RegisterScreen (
+                onRegister = { email, password, confirmPassword -> /* handle register */ },
+                onNavigateToLogin = { navController.navigate("login") }
+            )
+        }
 
         composable("home") {
             HomeScreen(

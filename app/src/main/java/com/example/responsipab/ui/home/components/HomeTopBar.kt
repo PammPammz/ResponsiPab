@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.sp
 fun HomeTopBar(
     cartItemCount: Int = 0,
     onCartClick: () -> Unit = {},
+    onLoginClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -31,7 +32,10 @@ fun HomeTopBar(
             }
         },
         actions = {
-            // Cart Badge
+            TextButton(onClick = onLoginClick) {
+                Text("Login")
+            }
+
             CartBadge(
                 itemCount = cartItemCount,
                 onClick = onCartClick

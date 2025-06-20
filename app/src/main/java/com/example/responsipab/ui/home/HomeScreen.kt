@@ -47,7 +47,8 @@ fun HomeScreen(
         topBar = {
             HomeTopBar(
                 cartItemCount = cartState.totalItems,
-                onCartClick = onNavigateToCart
+                onCartClick = onNavigateToCart,
+                onLoginClick = { navController.navigate("login") }
             )
         },
         bottomBar = { HomeBottomBar(navController = navController) }
