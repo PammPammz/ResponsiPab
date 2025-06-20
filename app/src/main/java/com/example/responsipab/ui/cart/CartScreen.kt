@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.responsipab.data.model.CartItem
 import com.example.responsipab.ui.shared.utils.formatPrice
 import com.example.responsipab.ui.viewmodel.CartViewModel
@@ -28,6 +29,7 @@ import com.example.responsipab.ui.viewmodel.CartViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
+    navController: NavController,
     viewModel: CartViewModel = viewModel(),
     onNavigateBack: () -> Unit = {}
 ) {
@@ -92,7 +94,8 @@ fun CartScreen(
                     items = uiState.items,
                     onUpdateQuantity = viewModel::updateQuantity,
                     onRemoveItem = viewModel::removeFromCart,
-                    totalPrice = uiState.totalPrice
+                    totalPrice = uiState.totalPrice,
+                    navController = navController
                 )
             }
 
@@ -135,6 +138,7 @@ private fun EmptyCartContent() {
 
 @Composable
 private fun CartContent(
+    navController: NavController,
     items: List<CartItem>,
     onUpdateQuantity: (String, Int) -> Unit,
     onRemoveItem: (String) -> Unit,
@@ -159,7 +163,7 @@ private fun CartContent(
         // Total dan Checkout
         CartSummary(
             totalPrice = totalPrice,
-            onCheckout = { /* Navigate to checkout */ }
+            onCheckout = { navController.navigate("checkout") }
         )
     }
 }

@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.responsipab.data.model.Camera
 import com.example.responsipab.ui.home.components.CategorySection
 import com.example.responsipab.ui.home.components.HomeBottomBar
@@ -33,10 +35,11 @@ import com.example.responsipab.ui.viewmodel.CartViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    navController: NavHostController,
     cartViewModel: CartViewModel,
     onCameraClick: (Camera) -> Unit,
     onNavigateToCart: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val cartState by cartViewModel.uiState.collectAsState()
 
@@ -47,7 +50,7 @@ fun HomeScreen(
                 onCartClick = onNavigateToCart
             )
         },
-        bottomBar = { HomeBottomBar() }
+        bottomBar = { HomeBottomBar(navController = navController) }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier

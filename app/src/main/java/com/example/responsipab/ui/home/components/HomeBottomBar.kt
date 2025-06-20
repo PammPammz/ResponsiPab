@@ -10,13 +10,29 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.compose.runtime.getValue
+
 
 @Composable
-fun HomeBottomBar() {
+fun HomeBottomBar(navController: NavHostController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination?.route
+
     NavigationBar {
         NavigationBarItem(
-            selected = true,
-            onClick = { /* TODO: Navigasi ke Home */ },
+            selected = currentDestination == "home",
+            onClick = {
+                if (currentDestination != "home") {
+                    navController.navigate("home") {
+                        // SAFELY pop up to a known destination
+                        popUpTo("home") { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            },
             icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
             label = { Text("Home") }
         )
@@ -27,16 +43,18 @@ fun HomeBottomBar() {
             label = { Text("Explore") }
         )
         NavigationBarItem(
-            selected = false,
-            onClick = { /* TODO: Navigasi ke Booking */ },
-            icon = { Icon(Icons.Default.DateRange, contentDescription = "Booking") },
-            label = { Text("Booking") }
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = { /* TODO: Navigasi ke Favorit */ },
-            icon = { Icon(Icons.Default.Favorite, contentDescription = "Favorit") },
-            label = { Text("Favorit") }
+            selected = currentDestination == "orders",
+            onClick = {
+                if (currentDestination != "orders") {
+                    navController.navigate("orders") {
+                        popUpTo("home") { saveState = true } // or "orders" if it's safe
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            },
+            icon = { Icon(Icons.Default.DateRange, contentDescription = "Orders") },
+            label = { Text("Orders") }
         )
     }
 }
