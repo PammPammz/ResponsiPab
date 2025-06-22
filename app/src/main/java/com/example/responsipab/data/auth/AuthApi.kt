@@ -1,8 +1,18 @@
-package com.example.responsipab.data.api
+package com.example.responsipab.data.auth
 
-import com.example.responsipab.data.model.User
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+
+data class User(
+    val id: Int,
+    val name: String,
+    val email: String
+)
+
+data class UserResponse(
+    val user: User
+)
 
 data class RegisterRequest(
     val name: String,
@@ -34,4 +44,7 @@ interface AuthApi {
 
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): LoginResponse
+
+    @GET("auth/me")
+    suspend fun getCurrentUser(): UserResponse
 }

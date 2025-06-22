@@ -21,8 +21,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.responsipab.data.model.Camera
+import com.example.responsipab.data.auth.AuthViewModel
 import com.example.responsipab.ui.home.components.CategorySection
 import com.example.responsipab.ui.home.components.HomeBottomBar
 import com.example.responsipab.ui.home.components.HomeTopBar
@@ -39,16 +41,20 @@ fun HomeScreen(
     cartViewModel: CartViewModel,
     onCameraClick: (Camera) -> Unit,
     onNavigateToCart: () -> Unit,
+    authViewModel: AuthViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
 ) {
+    val authState by authViewModel.uiState.collectAsStateWithLifecycle()
     val cartState by cartViewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
             HomeTopBar(
+                authUiState = authState,
                 cartItemCount = cartState.totalItems,
                 onCartClick = onNavigateToCart,
-                onLoginClick = { navController.navigate("login") }
+                onLoginClick = { navController.navigate("login") },
+                onLogoutClick = { authViewModel.logout() }
             )
         },
         bottomBar = { HomeBottomBar(navController = navController) }

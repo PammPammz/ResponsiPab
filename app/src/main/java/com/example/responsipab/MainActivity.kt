@@ -13,7 +13,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.responsipab.navigation.RentalCameraNavGraph
 import com.example.responsipab.ui.shared.theme.RentalKameraTheme
 import com.example.responsipab.ui.viewmodel.CartViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

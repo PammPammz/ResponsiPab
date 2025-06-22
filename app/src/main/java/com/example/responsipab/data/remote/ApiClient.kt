@@ -1,6 +1,6 @@
 package com.example.responsipab.data.remote
 
-import com.example.responsipab.data.api.AuthApi
+import com.example.responsipab.data.auth.AuthApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

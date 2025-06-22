@@ -13,14 +13,15 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.responsipab.data.auth.AuthViewModel
 
 @Composable
 fun RegisterScreen(
     navController: NavController
 ) {
-    val viewModel: AuthViewModel = viewModel()
+    val viewModel: AuthViewModel = hiltViewModel()
     val success by viewModel.registerSuccess
     val error by viewModel.error.collectAsState()
 

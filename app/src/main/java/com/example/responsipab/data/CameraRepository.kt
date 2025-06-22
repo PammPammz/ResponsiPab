@@ -1,6 +1,6 @@
 package com.example.responsipab.data
 
-import com.example.rentalkamera.R
+import com.example.responsipab.R
 import com.example.responsipab.data.model.Camera
 
 object CameraRepository {
