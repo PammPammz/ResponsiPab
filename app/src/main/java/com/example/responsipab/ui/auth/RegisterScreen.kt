@@ -11,14 +11,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 
 @Composable
 fun RegisterScreen(
-    onRegister: (email: String, password: String, confirmPassword: String) -> Unit,
-    onNavigateToLogin: () -> Unit
+    navController: NavController
 ) {
+    val viewModel: AuthViewModel = viewModel()
+    val success by viewModel.registerSuccess
+    val error by viewModel.error.collectAsState()
+
+    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -35,6 +41,24 @@ fun RegisterScreen(
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 24.dp)
         )
+
+        if (success) {
+            Text("Successfully registered", color = Color.Green)
+        }
+
+        if (error != null) {
+            Text("Error: $error", color = Color.Red)
+        }
+
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Name") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = email,
@@ -78,7 +102,7 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = { onRegister(email, password, confirmPassword) },
+            onClick = { viewModel.register(name, email, password, confirmPassword) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Daftar")
@@ -90,7 +114,7 @@ fun RegisterScreen(
             text = "Sudah punya akun? Login di sini",
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onNavigateToLogin() },
+                .clickable { navController.navigate("login") },
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.primary
         )

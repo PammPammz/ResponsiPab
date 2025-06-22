@@ -1,5 +1,6 @@
 package com.example.responsipab.ui.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,16 +13,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 
 @Composable
 fun LoginScreen(
-    onLogin: (email: String, password: String) -> Unit,
+    navController: NavController,
     onNavigateToRegister: () -> Unit
 ) {
+    val authViewModel: AuthViewModel = viewModel()
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
+
+    val loginSuccess by authViewModel.loginSuccess
+    val loginError by authViewModel.loginError
+    val context = LocalContext.current
+
+
+    LaunchedEffect(loginSuccess) {
+        if (loginSuccess) {
+            Toast.makeText(context, "Login berhasil!", Toast.LENGTH_SHORT).show()
+            authViewModel.resetLoginState()
+            navController.navigate("home") {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -66,10 +88,14 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = { onLogin(email, password) },
+            onClick = { authViewModel.login(email, password) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Login")
+        }
+
+        loginError?.let {
+            Text(text = it, color = Color.Red, modifier = Modifier.padding(top = 8.dp))
         }
 
         Spacer(modifier = Modifier.height(16.dp))

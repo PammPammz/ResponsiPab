@@ -29,15 +29,14 @@ fun RentalCameraNavGraph(
 
         composable("login") {
             LoginScreen (
-                onLogin = { email, password -> /* handle login */ },
+                navController = navController,
                 onNavigateToRegister = { navController.navigate("register") }
             )
         }
 
         composable("register") {
             RegisterScreen (
-                onRegister = { email, password, confirmPassword -> /* handle register */ },
-                onNavigateToLogin = { navController.navigate("login") }
+                navController = navController
             )
         }
 
