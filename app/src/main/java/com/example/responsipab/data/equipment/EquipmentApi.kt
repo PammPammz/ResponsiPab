@@ -2,6 +2,7 @@ package com.example.responsipab.data.equipment
 
 import com.google.gson.annotations.SerializedName
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 data class Category(
     @SerializedName("id")
@@ -14,6 +15,9 @@ data class Category(
 data class Equipment(
     @SerializedName("id")
     val id: Int,
+
+    @SerializedName("slug")
+    val slug: String,
 
     @SerializedName("name")
     val name: String,
@@ -53,7 +57,18 @@ data class EquipmentsResponse(
     val categories: List<Category>
 )
 
+data class EquipmentDetailResponse(
+    @SerializedName("equipment")
+    val equipment: Equipment,
+
+    @SerializedName("inCart")
+    val inCart: Boolean
+)
+
 interface EquipmentApi {
     @GET("equipments")
     suspend fun getEquipments(): EquipmentsResponse
+
+    @GET("equipments/{slug}")
+    suspend fun getEquipmentDetail(@Path("slug") slug: String): EquipmentDetailResponse
 }

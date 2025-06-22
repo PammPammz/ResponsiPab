@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.responsipab.data.model.Camera
 import com.example.responsipab.data.auth.AuthViewModel
+import com.example.responsipab.data.equipment.Equipment
 import com.example.responsipab.data.equipment.EquipmentListState
 import com.example.responsipab.data.equipment.EquipmentViewModel
 import com.example.responsipab.ui.home.components.CategorySection
@@ -43,7 +43,7 @@ import com.example.responsipab.ui.viewmodel.CartViewModel
 fun HomeScreen(
     navController: NavHostController,
     cartViewModel: CartViewModel,
-    onCameraClick: (Camera) -> Unit,
+    onCameraClick: (Equipment) -> Unit,
     onNavigateToCart: () -> Unit,
     authViewModel: AuthViewModel = hiltViewModel(),
     equipmentViewModel: EquipmentViewModel = hiltViewModel(),
@@ -85,7 +85,9 @@ fun HomeScreen(
             }
             is EquipmentListState.Error -> {
                 Box(
-                    modifier = Modifier.fillMaxSize().padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -160,7 +162,7 @@ fun HomeScreen(
                         }
                         PopularCameraSection(
                             popularEquipments = newEquipments,
-                            onCameraClick = onCameraClick,
+                            onCameraClick = { onCameraClick },
                             cartViewModel = cartViewModel
                         )
                     }

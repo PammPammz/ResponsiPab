@@ -30,7 +30,7 @@ import com.example.responsipab.ui.viewmodel.CartViewModel
 @Composable
 fun PopularCameraSection(
     popularEquipments: List<Equipment>,
-    onCameraClick: (Camera) -> Unit,
+    onCameraClick: (Equipment) -> Unit,
     cartViewModel: CartViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -58,14 +58,14 @@ fun PopularCameraSection(
 @Composable
 private fun PopularCameraCard(
     equipment: Equipment,
-    onCameraClick: (Camera) -> Unit,
+    onCameraClick: (Equipment) -> Unit,
     onAddToCart: (Camera, Int, Int) -> Unit,
     isLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier.width(200.dp),
-        onClick = {  },
+        onClick = { onCameraClick(equipment) },
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
@@ -105,16 +105,6 @@ private fun PopularCameraCard(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Add to Cart Button
-//            AddToCartButton(
-//                camera = camera,
-//                onAddToCart = onAddToCart,
-//                modifier = Modifier.fillMaxWidth(),
-//                isLoading = isLoading
-//            )
         }
     }
 }

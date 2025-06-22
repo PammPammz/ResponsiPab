@@ -45,7 +45,7 @@ fun RentalCameraNavGraph(
                 navController = navController,
                 cartViewModel = cartViewModel,
                 onCameraClick = { camera ->
-                    navController.navigate("camera_detail/${camera.id}")
+                    navController.navigate("camera_detail/${camera.slug}")
                 },
                 onNavigateToCart = {
                     navController.navigate("cart")
@@ -54,12 +54,11 @@ fun RentalCameraNavGraph(
         }
 
         composable(
-            route = "camera_detail/{cameraId}",
-            arguments = listOf(navArgument("cameraId") { type = NavType.IntType })
+            route = "camera_detail/{slug}",
+            arguments = listOf(navArgument("slug") { type = NavType.StringType })
         ) { backStackEntry ->
-            val cameraId = backStackEntry.arguments?.getInt("cameraId")
+            val cameraId = backStackEntry.arguments?.getString("slug")
             CameraDetailScreen(
-                cameraId = cameraId,
                 cartViewModel = cartViewModel,
                 onBack = { navController.popBackStack() },
                 onNavigateToCart = {

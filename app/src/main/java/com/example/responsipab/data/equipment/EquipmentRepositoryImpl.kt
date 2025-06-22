@@ -17,4 +17,13 @@ class EquipmentRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun getEquipmentDetail(slug: String): Result<EquipmentDetailResponse> {
+        return try {
+            val response = api.getEquipmentDetail(slug)
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
