@@ -4,6 +4,9 @@ import com.example.responsipab.data.auth.AuthApi
 import com.example.responsipab.data.auth.TokenManager
 import com.example.responsipab.data.auth.AuthRepository
 import com.example.responsipab.data.auth.AuthRepositoryImpl
+import com.example.responsipab.data.equipment.EquipmentApi
+import com.example.responsipab.data.equipment.EquipmentRepository
+import com.example.responsipab.data.equipment.EquipmentRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -71,6 +74,12 @@ object AppModule {
     fun provideAuthApi(retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideEquipmentApi(retrofit: Retrofit): EquipmentApi {
+        return retrofit.create(EquipmentApi::class.java)
+    }
 }
 
 
@@ -83,4 +92,10 @@ abstract class RepositoryModule {
     abstract fun bindAuthRepository(
         authRepositoryImpl: AuthRepositoryImpl
     ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindEquipmentRepository(
+        equipmentRepositoryImpl: EquipmentRepositoryImpl
+    ): EquipmentRepository
 }
