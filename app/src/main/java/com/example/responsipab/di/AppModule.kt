@@ -4,6 +4,9 @@ import com.example.responsipab.data.auth.AuthApi
 import com.example.responsipab.data.auth.TokenManager
 import com.example.responsipab.data.auth.AuthRepository
 import com.example.responsipab.data.auth.AuthRepositoryImpl
+import com.example.responsipab.data.cart.CartApi
+import com.example.responsipab.data.cart.CartRepository
+import com.example.responsipab.data.cart.CartRepositoryImpl
 import com.example.responsipab.data.equipment.EquipmentApi
 import com.example.responsipab.data.equipment.EquipmentRepository
 import com.example.responsipab.data.equipment.EquipmentRepositoryImpl
@@ -80,6 +83,12 @@ object AppModule {
     fun provideEquipmentApi(retrofit: Retrofit): EquipmentApi {
         return retrofit.create(EquipmentApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideCartApi(retrofit: Retrofit): CartApi {
+        return retrofit.create(CartApi::class.java)
+    }
 }
 
 
@@ -98,4 +107,8 @@ abstract class RepositoryModule {
     abstract fun bindEquipmentRepository(
         equipmentRepositoryImpl: EquipmentRepositoryImpl
     ): EquipmentRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCartRepository(impl: CartRepositoryImpl): CartRepository
 }

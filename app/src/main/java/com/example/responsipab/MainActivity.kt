@@ -37,7 +37,6 @@ class MainActivity : ComponentActivity() {
 fun RentalKameraApp() {
     val navController = rememberNavController()
 
-    // Inisialisasi CartViewModel di level app untuk sharing state
     val cartViewModel: CartViewModel = viewModel()
 
     RentalCameraNavGraph(

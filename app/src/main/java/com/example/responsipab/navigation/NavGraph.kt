@@ -59,7 +59,6 @@ fun RentalCameraNavGraph(
         ) { backStackEntry ->
             val cameraId = backStackEntry.arguments?.getString("slug")
             CameraDetailScreen(
-                cartViewModel = cartViewModel,
                 onBack = { navController.popBackStack() },
                 onNavigateToCart = {
                     navController.navigate("cart")

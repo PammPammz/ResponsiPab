@@ -34,11 +34,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.example.responsipab.data.cart.CartViewModel
 import com.example.responsipab.data.equipment.EquipmentDetailState
 import com.example.responsipab.data.equipment.EquipmentDetailViewModel
 import com.example.responsipab.ui.home.components.CartBadge
 import com.example.responsipab.ui.shared.utils.formatPrice
-import com.example.responsipab.ui.viewmodel.CartViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,11 +50,9 @@ fun CameraDetailScreen(
     cartViewModel: CartViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val cartState by cartViewModel.uiState.collectAsStateWithLifecycle()
 
     when (val detailState = state) {
         is EquipmentDetailState.Loading -> {
-            // Show a centered loading indicator
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
@@ -66,6 +64,7 @@ fun CameraDetailScreen(
         }
         is EquipmentDetailState.Success -> {
             val equipment = detailState.equipment
+
             val isInCart = detailState.isInCart
 
             Scaffold(
@@ -79,7 +78,7 @@ fun CameraDetailScreen(
                         },
                         actions = {
                             CartBadge(
-                                itemCount = cartState.totalItems,
+                                itemCount = 0,
                                 onClick = onNavigateToCart
                             )
                             IconButton(onClick = { /* TODO */ }) {
@@ -137,7 +136,7 @@ fun CameraDetailScreen(
                             Button(
                                 onClick = {
                                     if (!isInCart) {
-                                        // cartViewModel.addToCart(equipment, 1, 1)
+                                         cartViewModel.addToCart(equipment.id)
                                     }
                                 },
                                 modifier = Modifier.fillMaxWidth(),
