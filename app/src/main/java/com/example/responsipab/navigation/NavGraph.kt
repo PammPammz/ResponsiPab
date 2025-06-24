@@ -69,10 +69,6 @@ fun RentalCameraNavGraph(
         composable("cart") {
             CartScreen(
                 navController = navController,
-                viewModel = cartViewModel,
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
             )
         }
 

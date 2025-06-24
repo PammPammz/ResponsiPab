@@ -25,9 +25,14 @@ data class AddToCartRequest(
     val equipmentId: Int
 )
 
+data class CartResponse(
+    @SerializedName("cartItems")
+    val cartItems: List<CartItem>
+)
+
 interface CartApi {
     @GET("cart")
-    suspend fun getCart(): List<CartItem>
+    suspend fun getCart(): CartResponse
 
     @POST("cart")
     suspend fun addToCart(@Body request: AddToCartRequest): Response<Unit>

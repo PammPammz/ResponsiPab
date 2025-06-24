@@ -6,7 +6,7 @@ class CartRepositoryImpl @Inject constructor(
     private val api: CartApi
 ) : CartRepository {
 
-    override suspend fun getCart(): Result<List<CartItem>> {
+    override suspend fun getCart(): Result<CartResponse> {
         return try {
             Result.success(api.getCart())
         } catch (e: Exception) {

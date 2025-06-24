@@ -24,8 +24,8 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = CartState.Loading
             repository.getCart()
-                .onSuccess { items ->
-                    _state.value = CartState.Success(items)
+                .onSuccess { response ->
+                    _state.value = CartState.Success(response.cartItems)
                 }
                 .onFailure {
                     _state.value = CartState.Error(it.localizedMessage ?: "Failed to load cart")
