@@ -10,6 +10,9 @@ import com.example.responsipab.data.cart.CartRepositoryImpl
 import com.example.responsipab.data.equipment.EquipmentApi
 import com.example.responsipab.data.equipment.EquipmentRepository
 import com.example.responsipab.data.equipment.EquipmentRepositoryImpl
+import com.example.responsipab.data.order.OrderApi
+import com.example.responsipab.data.order.OrderRepository
+import com.example.responsipab.data.order.OrderRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -89,6 +92,12 @@ object AppModule {
     fun provideCartApi(retrofit: Retrofit): CartApi {
         return retrofit.create(CartApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideOrderApi(retrofit: Retrofit): OrderApi {
+        return retrofit.create(OrderApi::class.java)
+    }
 }
 
 
@@ -111,4 +120,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindCartRepository(impl: CartRepositoryImpl): CartRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindOrderRepository(impl: OrderRepositoryImpl): OrderRepository
 }

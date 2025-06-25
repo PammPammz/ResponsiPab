@@ -85,16 +85,9 @@ fun RentalCameraNavGraph(
 
         composable("checkout") {
             val uiState by cartViewModel.uiState.collectAsState()
-            val cartItems = uiState.items
 
             CheckoutScreen(
-                cartItems = cartItems,
-                onSubmit = { formData ->
-                    // TODO: handle order submission
-                },
-                onBack = {
-                    navController.popBackStack()
-                }
+                navController = navController,
             )
         }
     }
