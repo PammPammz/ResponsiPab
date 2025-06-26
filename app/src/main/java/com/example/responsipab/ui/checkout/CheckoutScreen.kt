@@ -1,7 +1,7 @@
 package com.example.responsipab.ui.checkout
 
 
-import androidx.compose.foundation.clickable
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -11,36 +11,51 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.responsipab.data.model.CartItem
-import com.example.responsipab.ui.checkout.CheckoutFormData
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.example.responsipab.data.cart.CartItem
+import com.example.responsipab.data.cart.CartState
+import com.example.responsipab.data.cart.CartViewModel
+import com.example.responsipab.data.order.CheckoutEvent
+import com.example.responsipab.data.order.CheckoutViewModel
+import com.example.responsipab.ui.shared.utils.formatPrice
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckoutScreen(
-    cartItems: List<CartItem>,
-    onSubmit: (CheckoutFormData) -> Unit,
-    onBack: () -> Unit
+    navController: NavController,
+    viewModel: CheckoutViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel()
 ) {
-    var fullName by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-    var notes by remember { mutableStateOf("") }
-    var purposes by remember { mutableStateOf("") }
+    val formState = viewModel.formState
+    val cartState by cartViewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    var deliveryMethod by remember { mutableStateOf("Delivery") }
-
-    var startDate by remember { mutableStateOf("") }
-    var endDate by remember { mutableStateOf("") }
-
+    LaunchedEffect(Unit) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is CheckoutEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+                is CheckoutEvent.NavigateToOrderSuccess -> {
+                    navController.navigate("orders")
+                }
+                else -> {}
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Checkout") },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
@@ -53,132 +68,98 @@ fun CheckoutScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
-            OutlinedTextField(
-                value = fullName,
-                onValueChange = { fullName = it },
-                label = { Text("Full Name") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Email") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = phone,
-                onValueChange = { phone = it },
-                label = { Text("Phone Number") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = address,
-                onValueChange = { address = it },
-                label = { Text("Address") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = notes,
-                onValueChange = { notes = it },
-                label = { Text("Special Requests / Notes") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = purposes,
-                onValueChange = { purposes = it },
-                label = { Text("Purposes") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            OutlinedTextField(value = formState.fullName, onValueChange = viewModel::onFullNameChange, label = { Text("Full Name") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = formState.email, onValueChange = viewModel::onEmailChange, label = { Text("Email") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = formState.phone, onValueChange = viewModel::onPhoneChange, label = { Text("Phone Number") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = formState.address, onValueChange = viewModel::onAddressChange, label = { Text("Address") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = formState.notes, onValueChange = viewModel::onNotesChange, label = { Text("Special Requests / Notes") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = formState.purpose, onValueChange = viewModel::onPurposeChange, label = { Text("Purpose") }, modifier = Modifier.fillMaxWidth())
 
             Spacer(Modifier.height(16.dp))
 
             Text("Delivery Method", style = MaterialTheme.typography.titleMedium)
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(end = 16.dp)
-                ) {
-                    RadioButton(
-                        selected = deliveryMethod == "Delivery",
-                        onClick = { deliveryMethod = "Delivery" }
-                    )
-                    Text("Delivery")
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = deliveryMethod == "Store Pickup",
-                        onClick = { deliveryMethod = "Store Pickup" }
-                    )
-                    Text("Store Pickup")
-                }
+            Row {
+                RadioButton(selected = formState.deliveryMethod == "delivery", onClick = { viewModel.onDeliveryMethodChange("delivery") })
+                Text("Delivery", modifier = Modifier.align(Alignment.CenterVertically))
+                Spacer(Modifier.width(16.dp))
+                RadioButton(selected = formState.deliveryMethod == "pickup", onClick = { viewModel.onDeliveryMethodChange("pickup") })
+                Text("Store Pickup", modifier = Modifier.align(Alignment.CenterVertically))
             }
 
             Spacer(Modifier.height(16.dp))
 
-            OutlinedTextField(
-                value = startDate,
-                onValueChange = { startDate = it },
-                label = { Text("Rental Start Date (YYYY-MM-DD)") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = endDate,
-                onValueChange = { endDate = it },
-                label = { Text("Rental End Date (YYYY-MM-DD)") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            OutlinedTextField(value = formState.startDate, onValueChange = viewModel::onStartDateChange, label = { Text("Rental Start Date (YYYY-MM-DD)") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = formState.endDate, onValueChange = viewModel::onEndDateChange, label = { Text("Rental End Date (YYYY-MM-DD)") }, modifier = Modifier.fillMaxWidth())
 
             Spacer(Modifier.height(24.dp))
 
             Divider(modifier = Modifier.padding(vertical = 16.dp))
 
-            Text("Equipment Summary", style = MaterialTheme.typography.titleMedium)
+            if (cartState is CartState.Success && (cartState as CartState.Success).items.isNotEmpty()) {
+                CheckoutSummarySection(cartItems = (cartState as CartState.Success).items)
+            }
 
-            cartItems.forEach { item ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(text = item.camera.name, style = MaterialTheme.typography.bodyMedium)
-                        Text(text = "x${item.quantity}", style = MaterialTheme.typography.bodySmall)
-                    }
-                    Text(
-                        text = "Rp${item.totalPrice.toInt()}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+            Spacer(Modifier.height(16.dp))
+            Button(
+                onClick = viewModel::submitOrder,
+                enabled = !viewModel.isSubmitting,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
+                if (viewModel.isSubmitting) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
+                } else {
+                    Text("Submit Order")
                 }
             }
+        }
+    }
+}
 
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
+@Composable
+private fun CheckoutSummarySection(
+    cartItems: List<CartItem>,
+    modifier: Modifier = Modifier
+) {
+    val totalPrice = cartItems.sumOf { it.equipment.price * it.quantity }
+
+    Column(modifier = modifier) {
+        Text("Equipment Summary", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+
+        cartItems.forEach { item ->
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Total", style = MaterialTheme.typography.titleMedium)
-                Text("Rp${250000.toInt()}", style = MaterialTheme.typography.titleMedium)
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = item.equipment.name, style = MaterialTheme.typography.bodyLarge)
+                    Text(text = "x${item.quantity}", style = MaterialTheme.typography.bodyMedium)
+                }
+                Text(
+                    text = formatPrice(item.equipment.price * item.quantity),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
+        }
 
-            Button(
-                onClick = {
-                    onSubmit(
-                        CheckoutFormData(
-                            fullName, email, phone, address, notes,
-                            purposes, deliveryMethod, startDate, endDate
-                        )
-                    )
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Submit Order")
-            }
+        Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Total", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text(
+                text = formatPrice(totalPrice),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

@@ -1,7 +1,6 @@
 // File: ui/screen/CartScreen.kt
 package com.example.responsipab.ui.cart
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,100 +9,71 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.responsipab.data.model.CartItem
+import coil.compose.AsyncImage
+import com.example.responsipab.data.cart.CartItem
+import com.example.responsipab.data.cart.CartState
+import com.example.responsipab.data.cart.CartViewModel
 import com.example.responsipab.ui.shared.utils.formatPrice
-import com.example.responsipab.ui.viewmodel.CartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
     navController: NavController,
-    viewModel: CartViewModel = viewModel(),
-    onNavigateBack: () -> Unit = {}
+    viewModel: CartViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { },
+                title = { Text("Keranjang Sewa") },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Kembali"
-                        )
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Kembali")
                     }
                 }
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            // Header
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Keranjang Sewa",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                if (uiState.items.isNotEmpty()) {
-                    TextButton(
-                        onClick = { viewModel.clearCart() }
-                    ) {
-                        Text("Hapus Semua")
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Content
-            if (uiState.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+        when (val cartState = state) {
+            is CartState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
-            } else if (uiState.items.isEmpty()) {
-                EmptyCartContent()
-            } else {
-                CartContent(
-                    items = uiState.items,
-                    onUpdateQuantity = viewModel::updateQuantity,
-                    onRemoveItem = viewModel::removeFromCart,
-                    totalPrice = uiState.totalPrice,
-                    navController = navController
-                )
             }
-
-            // Error handling
-            uiState.error?.let { error ->
-                LaunchedEffect(error) {
-                    // Log error or show snackbar
-                    viewModel.clearError()
+            is CartState.Error -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Error: ${cartState.message}")
+                }
+            }
+            is CartState.Success -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(16.dp)
+                ) {
+                    if (cartState.items.isEmpty()) {
+                        EmptyCartContent()
+                    } else {
+                        CartContent(
+                            navController = navController,
+                            items = cartState.items,
+                        )
+                    }
                 }
             }
         }
@@ -140,9 +110,6 @@ private fun EmptyCartContent() {
 private fun CartContent(
     navController: NavController,
     items: List<CartItem>,
-    onUpdateQuantity: (String, Int) -> Unit,
-    onRemoveItem: (String) -> Unit,
-    totalPrice: Double
 ) {
     Column {
         LazyColumn(
@@ -152,17 +119,14 @@ private fun CartContent(
             items(items) { cartItem ->
                 CartItemCard(
                     cartItem = cartItem,
-                    onUpdateQuantity = onUpdateQuantity,
-                    onRemoveItem = onRemoveItem
                 )
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Total dan Checkout
         CartSummary(
-            totalPrice = totalPrice,
+            totalPrice = items.sumOf { it.equipment.price * it.quantity },
             onCheckout = { navController.navigate("checkout") }
         )
     }
@@ -172,8 +136,7 @@ private fun CartContent(
 @Composable
 private fun CartItemCard(
     cartItem: CartItem,
-    onUpdateQuantity: (String, Int) -> Unit,
-    onRemoveItem: (String) -> Unit
+    viewModel: CartViewModel = hiltViewModel()
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -183,92 +146,29 @@ private fun CartItemCard(
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Camera Image
-            Image(
-                painter = painterResource(id = cartItem.camera.imageRes),
-                contentDescription = cartItem.camera.name,
+            AsyncImage(
+                model = cartItem.equipment.imageUrl,
+                contentDescription = cartItem.equipment.name,
                 modifier = Modifier
                     .size(80.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop
             )
-
             Spacer(modifier = Modifier.width(12.dp))
-
-            // Camera Details
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = cartItem.camera.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = cartItem.camera.brand,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "${formatPrice(cartItem.camera.price.toDouble())}/hari",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Quantity Controls
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    TextButton(
-                        onClick = { onUpdateQuantity(cartItem.id, cartItem.quantity - 1) },
-                        modifier = Modifier.size(32.dp),
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Text("-", style = MaterialTheme.typography.titleLarge)
-                    }
-
-                    Text(
-                        text = cartItem.quantity.toString(),
-                        modifier = Modifier
-                            .widthIn(min = 40.dp)
-                            .padding(horizontal = 8.dp),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
-                    IconButton(
-                        onClick = { onUpdateQuantity(cartItem.id, cartItem.quantity + 1) },
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = "Tambah")
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    IconButton(
-                        onClick = { onRemoveItem(cartItem.id) }
-                    ) {
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = "Hapus",
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = cartItem.equipment.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(text = formatPrice(cartItem.equipment.price), style = MaterialTheme.typography.bodyMedium)
             }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // TODO: Wire up to a future viewModel.updateQuantity() function
+                IconButton(onClick = { /* TODO */ }, enabled = false) { Icon(Icons.Default.Remove, "Kurangi") }
+                Text(text = cartItem.quantity.toString(), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(horizontal = 8.dp))
+                IconButton(onClick = { /* TODO */ }, enabled = false) { Icon(Icons.Default.Add, "Tambah") }
 
-            // Total Price
-            Column(
-                horizontalAlignment = Alignment.End
-            ) {
-                Text(
-                    text = "${formatPrice(cartItem.totalPrice.toDouble())}",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                Spacer(modifier = Modifier.width(8.dp))
+                IconButton(onClick = { viewModel.removeItem(cartItem.id) }) {
+                    Icon(Icons.Default.Delete, contentDescription = "Hapus", tint = MaterialTheme.colorScheme.error)
+                }
             }
         }
     }

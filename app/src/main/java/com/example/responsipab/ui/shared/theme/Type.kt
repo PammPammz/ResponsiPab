@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.Font
-import com.example.rentalkamera.R
+import com.example.responsipab.R
 
 val InterFontFamily = FontFamily(
     Font(R.font.inter_regular),

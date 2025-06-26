@@ -20,33 +20,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.responsipab.data.CameraRepository
+import coil.compose.AsyncImage
+import com.example.responsipab.data.equipment.Equipment
 import com.example.responsipab.data.model.Camera
 import com.example.responsipab.ui.shared.utils.formatPrice
-import com.example.responsipab.ui.viewmodel.CartViewModel
 
 @Composable
 fun PopularCameraSection(
-    onCameraClick: (Camera) -> Unit,
-    cartViewModel: CartViewModel,
+    popularEquipments: List<Equipment>,
+    onCameraClick: (Equipment) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val popularCameras = CameraRepository.cameraList.take(5) // Ambil 5 kamera populer
-    val cartState by cartViewModel.uiState.collectAsState()
-
     LazyRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(horizontal = 4.dp)
     ) {
-        items(popularCameras) { camera ->
+        items(popularEquipments) { equipment ->
             PopularCameraCard(
-                camera = camera,
+                equipment = equipment,
                 onCameraClick = onCameraClick,
-                onAddToCart = { cam, quantity, rentalDays ->
-                    cartViewModel.addToCart(cam, quantity, rentalDays)
-                },
-                isLoading = cartState.isLoading
             )
         }
     }
@@ -55,86 +48,50 @@ fun PopularCameraSection(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PopularCameraCard(
-    camera: Camera,
-    onCameraClick: (Camera) -> Unit,
-    onAddToCart: (Camera, Int, Int) -> Unit,
-    isLoading: Boolean,
+    equipment: Equipment,
+    onCameraClick: (Equipment) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier.width(200.dp),
-        onClick = { onCameraClick(camera) },
+        onClick = { onCameraClick(equipment) },
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
             modifier = Modifier.padding(12.dp)
         ) {
-            // Camera Image
-            Image(
-                painter = painterResource(id = camera.imageRes),
-                contentDescription = camera.name,
+            AsyncImage(
+                model = equipment.imageUrl,
+                contentDescription = equipment.name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp)
-                    .clip(RoundedCornerShape(8.dp)),
+                    .height(120.dp),
                 contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Camera Name
             Text(
-                text = camera.name,
+                text = equipment.name,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
 
-            // Brand
             Text(
-                text = camera.brand,
+                text = equipment.category.name,
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // Rating
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    Icons.Default.Star,
-                    contentDescription = "Rating",
-                    tint = Color(0xFFFFC107),
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = camera.rating.toString(),
-                    fontSize = 12.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // Price
             Text(
-                text = "${formatPrice(camera.price.toInt().toDouble())}/hari",
+                text = "${formatPrice(equipment.price.toInt().toDouble())}/hari",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Add to Cart Button
-            AddToCartButton(
-                camera = camera,
-                onAddToCart = onAddToCart,
-                modifier = Modifier.fillMaxWidth(),
-                isLoading = isLoading
             )
         }
     }

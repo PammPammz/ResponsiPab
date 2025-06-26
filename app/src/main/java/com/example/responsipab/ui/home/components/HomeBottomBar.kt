@@ -38,7 +38,7 @@ fun HomeBottomBar(navController: NavHostController) {
         )
         NavigationBarItem(
             selected = false,
-            onClick = { /* TODO: Navigasi ke Explore */ },
+            onClick = { navController.navigate("all_equipments") },
             icon = { Icon(Icons.Default.Search, contentDescription = "Explore") },
             label = { Text("Explore") }
         )
