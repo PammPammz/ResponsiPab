@@ -12,7 +12,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.responsipab.navigation.RentalCameraNavGraph
 import com.example.responsipab.ui.shared.theme.RentalKameraTheme
-import com.example.responsipab.ui.viewmodel.CartViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -37,12 +36,7 @@ class MainActivity : ComponentActivity() {
 fun RentalKameraApp() {
     val navController = rememberNavController()
 
-    val cartViewModel: CartViewModel = viewModel()
-
-    RentalCameraNavGraph(
-        navController = navController,
-        cartViewModel = cartViewModel
-    )
+    RentalCameraNavGraph(navController = navController)
 }
 
 @Preview(showBackground = true)

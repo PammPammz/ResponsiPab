@@ -37,13 +37,11 @@ import com.example.responsipab.ui.home.components.HomeTopBar
 import com.example.responsipab.ui.home.components.PopularCameraSection
 import com.example.responsipab.ui.home.components.PromoCard
 import com.example.responsipab.ui.home.components.SearchBar
-import com.example.responsipab.ui.viewmodel.CartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    cartViewModel: CartViewModel,
     onCameraClick: (Equipment) -> Unit,
     onNavigateToCart: () -> Unit,
     authViewModel: AuthViewModel = hiltViewModel(),
@@ -52,7 +50,6 @@ fun HomeScreen(
 ) {
     val authState by authViewModel.uiState.collectAsStateWithLifecycle()
     val equipmentState by equipmentViewModel.state.collectAsStateWithLifecycle()
-    val cartState by cartViewModel.uiState.collectAsState()
 
     val allEquipments = if (equipmentState is EquipmentListState.Success) {
         (equipmentState as EquipmentListState.Success).equipments
@@ -67,7 +64,6 @@ fun HomeScreen(
         topBar = {
             HomeTopBar(
                 authUiState = authState,
-                cartItemCount = cartState.totalItems,
                 onCartClick = onNavigateToCart,
                 onLoginClick = { navController.navigate("login") },
                 onLogoutClick = { authViewModel.logout() }
@@ -142,7 +138,6 @@ fun HomeScreen(
                         PopularCameraSection(
                             popularEquipments = popularEquipments,
                             onCameraClick = onCameraClick,
-                            cartViewModel = cartViewModel
                         )
                     }
 
@@ -164,7 +159,6 @@ fun HomeScreen(
                         PopularCameraSection(
                             popularEquipments = newEquipments,
                             onCameraClick = { onCameraClick },
-                            cartViewModel = cartViewModel
                         )
                     }
 

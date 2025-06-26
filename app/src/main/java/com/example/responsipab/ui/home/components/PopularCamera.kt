@@ -21,21 +21,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.responsipab.data.CameraRepository
 import com.example.responsipab.data.equipment.Equipment
 import com.example.responsipab.data.model.Camera
 import com.example.responsipab.ui.shared.utils.formatPrice
-import com.example.responsipab.ui.viewmodel.CartViewModel
 
 @Composable
 fun PopularCameraSection(
     popularEquipments: List<Equipment>,
     onCameraClick: (Equipment) -> Unit,
-    cartViewModel: CartViewModel,
     modifier: Modifier = Modifier
 ) {
-    val cartState by cartViewModel.uiState.collectAsState()
-
     LazyRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -45,10 +40,6 @@ fun PopularCameraSection(
             PopularCameraCard(
                 equipment = equipment,
                 onCameraClick = onCameraClick,
-                onAddToCart = { cam, quantity, rentalDays ->
-                    cartViewModel.addToCart(cam, quantity, rentalDays)
-                },
-                isLoading = cartState.isLoading
             )
         }
     }
@@ -59,8 +50,6 @@ fun PopularCameraSection(
 private fun PopularCameraCard(
     equipment: Equipment,
     onCameraClick: (Equipment) -> Unit,
-    onAddToCart: (Camera, Int, Int) -> Unit,
-    isLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -98,7 +87,6 @@ private fun PopularCameraCard(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // Price
             Text(
                 text = "${formatPrice(equipment.price.toInt().toDouble())}/hari",
                 fontSize = 12.sp,

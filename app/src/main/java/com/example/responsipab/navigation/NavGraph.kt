@@ -13,13 +13,12 @@ import com.example.responsipab.ui.camera_detail.CameraDetailScreen
 import com.example.responsipab.ui.home.HomeScreen
 import com.example.responsipab.ui.cart.CartScreen
 import com.example.responsipab.ui.checkout.CheckoutScreen
+import com.example.responsipab.ui.equipments.EquipmentListScreen
 import com.example.responsipab.ui.orders.OrderListScreen
-import com.example.responsipab.ui.viewmodel.CartViewModel
 
 @Composable
 fun RentalCameraNavGraph(
     navController: NavHostController = rememberNavController(),
-    cartViewModel: CartViewModel
 ) {
     NavHost(navController = navController, startDestination = "home") {
 
@@ -39,7 +38,6 @@ fun RentalCameraNavGraph(
         composable("home") {
             HomeScreen(
                 navController = navController,
-                cartViewModel = cartViewModel,
                 onCameraClick = { camera ->
                     navController.navigate("camera_detail/${camera.slug}")
                 },
@@ -47,6 +45,10 @@ fun RentalCameraNavGraph(
                     navController.navigate("cart")
                 }
             )
+        }
+
+        composable("all_equipments") {
+            EquipmentListScreen(navController = navController)
         }
 
         composable(
