@@ -17,4 +17,13 @@ class OrderRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun getOrders(): Result<List<Order>> {
+        return try {
+            val response = api.getOrders()
+            Result.success(response.orders.data)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
