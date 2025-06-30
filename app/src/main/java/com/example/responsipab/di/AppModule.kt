@@ -33,7 +33,6 @@ class AuthInterceptor @Inject constructor(private val tokenManager: TokenManager
     override fun intercept(chain: Interceptor.Chain): Response {
         val requestBuilder = chain.request().newBuilder()
 
-        // Synchronously get the token. See previous explanation.
         val token = runBlocking { tokenManager.getToken().firstOrNull() }
         token?.let {
             requestBuilder.addHeader("Authorization", "Bearer $it")
@@ -69,7 +68,7 @@ object AppModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8000/api/")
+            .baseUrl("http://192.168.100.132:8000/api/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
